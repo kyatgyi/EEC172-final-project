@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>CC3200 Checkers Console</title>
+
+<style>
+body {
+    font-family: monospace;
+    background-color: #e5e5e5;
+    text-align: center;
+}
+
+h1 {
+    margin-top: 50px;
+}
+
+.menu {
+    margin-top: 40px;
+}
+
+button {
+    font-size: 18px;
+    padding: 10px 20px;
+    margin: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>CC3200 CheckerBox</h1>
+
+<p>embedded checkers console powered by TI CC3200</p>
+
+<p>status: waiting for player...</p>
+
+<div class="menu">
+
+<button onclick="newGame()">New Game</button>
+<br>
+
+<button onclick="loadGame()">Load Game</button>
+<br>
+
+<button onclick="players()">Select Players</button>
+
+</div>
+
+<p id="message"></p>
+
+<script>
+
+function newGame() {
+    document.getElementById("message").innerHTML =
+    "starting a new game...";
+}
+
+function loadGame() {
+    document.getElementById("message").innerHTML =
+    "loading saved game from cloud...";
+}
+
+function players() {
+    document.getElementById("message").innerHTML =
+    "player selection coming soon";
+}
+
+</script>
+
+</body>
+</html>

@@ -1,72 +1,577 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>CC3200 Checkers Console</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CC3200 CheckerBox</title>
+  <style>
+    :root {
+      --bg: #f4f6f8;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --red: #dc2626;
+      --green: #16a34a;
+      --border: #dbe1e8;
+      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
 
-<style>
-body {
-    font-family: monospace;
-    background-color: #e5e5e5;
-    text-align: center;
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-h1 {
-    margin-top: 50px;
-}
+    html {
+      scroll-behavior: smooth;
+    }
 
-.menu {
-    margin-top: 40px;
-}
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(180deg, #eef2f7 0%, #f8fafc 100%);
+      color: var(--text);
+      line-height: 1.6;
+    }
 
-button {
-    font-size: 18px;
-    padding: 10px 20px;
-    margin: 10px;
-}
-</style>
+    .container {
+      width: min(1100px, 92%);
+      margin: 0 auto;
+    }
 
+    header {
+      padding: 70px 0 40px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #e0ecff;
+      color: var(--accent-dark);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      margin-bottom: 14px;
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      max-width: 760px;
+      margin: 0 auto;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .hero-buttons {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      text-decoration: none;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-weight: 600;
+      transition: 0.2s ease;
+      display: inline-block;
+      border: 1px solid transparent;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: white;
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: #f9fafb;
+      transform: translateY(-1px);
+    }
+
+    .status-box {
+      margin: 36px auto 0;
+      width: fit-content;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: var(--shadow);
+      padding: 14px 20px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .hero-image {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .hero-image img {
+      width: min(360px, 100%);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      background: white;
+    }
+
+    main {
+      padding-bottom: 70px;
+    }
+
+    section {
+      margin-top: 30px;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 30px;
+    }
+
+    h2 {
+      font-size: 1.7rem;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: var(--muted);
+    }
+
+    .grid-3,
+    .grid-2,
+    .gallery-grid {
+      display: grid;
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .grid-3 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .gallery-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mini-card {
+      background: #f9fbfd;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .feature-icon {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .feature-list,
+    .plain-list {
+      margin-top: 12px;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .plain-list li,
+    .feature-list li {
+      margin-bottom: 8px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .control-box {
+      border-left: 5px solid var(--accent);
+      background: #f9fbfd;
+      border-radius: 12px;
+      padding: 18px;
+      border: 1px solid var(--border);
+    }
+
+    .turn-demo {
+      display: flex;
+      gap: 12px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .turn-pill {
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .turn-red { background: var(--red); }
+    .turn-green { background: var(--green); }
+
+    .gallery-item {
+      background: #f9fbfd;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      border-radius: 12px;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .gallery-caption {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .video-wrapper {
+      margin-top: 18px;
+      position: relative;
+      width: 100%;
+      padding-bottom: 56.25%;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      background: #000;
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .link-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .link-chip {
+      text-decoration: none;
+      color: var(--accent-dark);
+      background: #eaf1ff;
+      border: 1px solid #cfe0ff;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 30px 0 50px;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 900px) {
+      .grid-3,
+      .grid-2,
+      .controls,
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .section-card {
+        padding: 22px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <header>
+    <div class="container">
+      <div class="badge">EEC 172 Final Project</div>
+      <h1>Checkers</h1>
+      <p class="subtitle">
+        An embedded checkers game built on the TI CC3200 LaunchPad with IR remote control,
+        OLED display output, accelerometer interaction, and AWS cloud save/load support.
+      </p>
 
-<h1>CC3200 CheckerBox</h1>
+      <div class="hero-buttons">
+        <a class="btn btn-primary" href="#overview">Project Overview</a>
+        <a class="btn btn-secondary" href="#gallery">Gallery</a>
+        <a class="btn btn-secondary" href="#demo">Demo Video</a>
+        <a class="btn btn-secondary" href="#cloud">AWS Integration</a>
+      </div>
 
-<p>embedded checkers console powered by TI CC3200</p>
+      <div id="statusBox" class="status-box">
+        Status: project page ready
+      </div>
 
-<p>status: waiting for player...</p>
+      <div class="hero-image">
+        <img src="images/menu-screen.png" alt="Checkers menu displayed on the OLED screen">
+      </div>
+    </div>
+  </header>
 
-<div class="menu">
+  <main class="container">
+    <section id="overview">
+      <div class="section-card">
+        <h2>Project Overview</h2>
+        <p>
+          Checkers is a two-player digital checkers system implemented on the TI CC3200.
+          The game is displayed on the OLED screen and controlled using an AT&amp;T IR remote.
+          Players can move pieces, capture opponents, promote kings, perform multiple jumps,
+          and save or restore game states through AWS IoT.
+        </p>
+      </div>
+    </section>
 
-<button onclick="newGame()">New Game</button>
-<br>
+    <section id="features">
+      <div class="section-card">
+        <h2>Key Features</h2>
+        <div class="grid-3">
+          <div class="mini-card">
+            <span class="feature-icon">🎮</span>
+            <h3>Embedded Gameplay</h3>
+            <p>Fully playable checkers game on the OLED with cursor-based square selection.</p>
+          </div>
+          <div class="mini-card">
+            <span class="feature-icon">☁️</span>
+            <h3>AWS Cloud Save</h3>
+            <p>Board states can be saved and restored using AWS IoT device shadow updates.</p>
+          </div>
+          <div class="mini-card">
+            <span class="feature-icon">📡</span>
+            <h3>IR + Accelerometer Input</h3>
+            <p>Remote buttons handle movement and actions, while the accelerometer supports interactive control and menu navigation.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<button onclick="loadGame()">Load Game</button>
-<br>
+    <section>
+      <div class="section-card">
+        <h2>Gameplay Logic</h2>
+        <div class="grid-2">
+          <div class="mini-card">
+            <h3>Implemented Rules</h3>
+            <ul class="feature-list">
+              <li>Diagonal movement</li>
+              <li>Single and multiple captures</li>
+              <li>King promotion</li>
+              <li>King backward movement and capture</li>
+              <li>Turn-based play with win detection</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h3>Visual Feedback</h3>
+            <ul class="feature-list">
+              <li>Highlighted cursor square</li>
+              <li>Selected piece outline</li>
+              <li>Valid move hint squares</li>
+              <li>Turn-color indicator</li>
+              <li>Winner screen and restart prompt</li>
+            </ul>
+          </div>
+        </div>
 
-<button onclick="players()">Select Players</button>
+        <div class="turn-demo">
+          <div class="turn-pill turn-red">Red Player Turn</div>
+          <div class="turn-pill turn-green">Green Player Turn</div>
+        </div>
+      </div>
+    </section>
 
-</div>
+    <section>
+      <div class="section-card">
+        <h2>Hardware Used</h2>
+        <div class="grid-2">
+          <div class="mini-card">
+            <h3>Main Components</h3>
+            <ul class="plain-list">
+              <li>TI CC3200 LaunchPad</li>
+              <li>Adafruit SSD1351 Color OLED</li>
+              <li>IR receiver and AT&amp;T remote</li>
+              <li>BMA222 accelerometer</li>
+            </ul>
+          </div>
+          <div class="mini-card">
+            <h3>Communication</h3>
+            <ul class="plain-list">
+              <li>SPI for OLED display output</li>
+              <li>GPIO interrupts for IR decoding</li>
+              <li>I2C for accelerometer input</li>
+              <li>TLS and HTTP for AWS communication</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<p id="message"></p>
+    <section id="demo">
+      <div class="section-card">
+        <h2>Demo Video</h2>
+        <p>
+          The short demo below shows the embedded checkers interface running on the CC3200-based hardware.
+        </p>
+        <div class="video-wrapper">
+          <iframe
+            src="https://www.youtube.com/embed/oS0re1hh_UU"
+            title="CC3200 Checkers Demo"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+          </iframe>
+        </div>
+      </div>
+    </section>
 
-<script>
+    <section id="gallery">
+      <div class="section-card">
+        <h2>Project Gallery</h2>
+        <div class="gallery-grid">
+          <div class="gallery-item">
+            <img src="rules-screen.png" alt="Rules screen on OLED display">
+            <p class="gallery-caption">Startup rules screen shown on the OLED before gameplay begins.</p>
+          </div>
+          <div class="gallery-item">
+            <img src="hardware-setup.png" alt="CC3200 board, OLED, breadboard, and IR remote">
+            <p class="gallery-caption">Hardware setup with the CC3200 LaunchPad, OLED, breadboard wiring, and IR remote.</p>
+          </div>
+          <div class="gallery-item">
+            <img src="menu-screen.png" alt="Checkers in-game menu on OLED">
+            <p class="gallery-caption">In-game menu with resume, save, load, and restart options.</p>
+          </div>
+          <div class="gallery-item">
+            <img src="win-screen.png" alt="Winner screen on OLED saying red wins">
+            <p class="gallery-caption">Winner screen displayed after a completed game.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-function newGame() {
-    document.getElementById("message").innerHTML =
-    "starting a new game...";
-}
+    <section id="cloud">
+      <div class="section-card">
+        <h2>AWS Integration</h2>
+        <p>
+          The project connects to AWS IoT over a secure TLS connection. The current board
+          state and active player can be serialized and uploaded to the device shadow.
+          A saved state can also be retrieved from the cloud and restored back onto the OLED.
+        </p>
+      </div>
+    </section>
 
-function loadGame() {
-    document.getElementById("message").innerHTML =
-    "loading saved game from cloud...";
-}
+    <section>
+      <div class="section-card">
+        <h2>Controls</h2>
+        <div class="controls">
+          <div class="control-box">
+            <h3>IR Remote</h3>
+            <p>2 / 4 / 6 / 8 move the cursor, ENTER selects or moves, 5 saves, 7 loads, and 0 opens the menu.</p>
+          </div>
+          <div class="control-box">
+            <h3>Accelerometer</h3>
+            <p>Tilt-based cursor interaction and motion-triggered menu support add another interactive layer to the system.</p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-function players() {
-    document.getElementById("message").innerHTML =
-    "player selection coming soon";
-}
+    <section>
+      <div class="section-card">
+        <h2>Challenges Solved</h2>
+        <div class="grid-2">
+          <div class="mini-card">
+            <h3>Game Logic</h3>
+            <p>
+              Multi-jump logic, king movement, promotion, selection handling, and move validation
+              were implemented and debugged directly on the embedded display.
+            </p>
+          </div>
+          <div class="mini-card">
+            <h3>System Integration</h3>
+            <p>
+              The project combines OLED drawing, IR decoding, accelerometer readings,
+              and AWS cloud communication into a single embedded application.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-</script>
+    <section>
+      <div class="section-card">
+        <h2>Project Links</h2>
+        <p>Quick access to the final project webpage and demo.</p>
+        <div class="link-row">
+          <a class="link-chip" href="https://kyatgyi.github.io/EEC172-final-project/" target="_blank">Live Project Page</a>
+          <a class="link-chip" href="https://youtube.com/shorts/oS0re1hh_UU?si=57tOcXoIhZbjmEBp" target="_blank">YouTube Demo</a>
+          <a class="link-chip" href="https://github.com/kyatgyi/EEC172-final-project" target="_blank">GitHub Repository</a>
+        </div>
+      </div>
+    </section>
 
+    <section>
+      <div class="section-card">
+        <h2>Future Work</h2>
+        <ul class="plain-list">
+          <li>Improve menu visuals and transitions</li>
+          <li>Add sound effects or score/stat tracking</li>
+          <li>Support richer accelerometer-based navigation</li>
+          <li>Add a polished cloud-connected status dashboard</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    CC3200 CheckerBox • Ye Yint Nay Htun • UC Davis EEC 172 Final Project
+  </footer>
+
+  <script>
+    const statusBox = document.getElementById("statusBox");
+
+    function setStatus(msg) {
+      statusBox.textContent = "Status: " + msg;
+    }
+
+    document.querySelectorAll(".btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        setStatus("exploring project page...");
+      });
+    });
+  </script>
 </body>
 </html>
